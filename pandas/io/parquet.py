@@ -245,11 +245,12 @@ class PyArrowImpl(BaseImpl):
         dtype_backend: DtypeBackend | lib.NoDefault = lib.no_default,
         storage_options: StorageOptions | None = None,
         filesystem=None,
+        to_pandas_kwargs: dict[str, Any] | None = None,
         **kwargs,
     ) -> DataFrame:
         kwargs["use_pandas_metadata"] = True
 
-        to_pandas_kwargs = {}
+        to_pandas_kwargs = to_pandas_kwargs or {}
         if dtype_backend == "numpy_nullable":
             from pandas.io._util import _arrow_dtype_mapping
 
@@ -505,6 +506,7 @@ def read_parquet(
     dtype_backend: DtypeBackend | lib.NoDefault = lib.no_default,
     filesystem: Any = None,
     filters: list[tuple] | list[list[tuple]] | None = None,
+    to_pandas_kwargs: dict[str, Any] | None = None,
     **kwargs,
 ) -> DataFrame:
     """
@@ -587,6 +589,9 @@ def read_parquet(
         to prevent the loading of some row-groups and/or files.
 
         .. versionadded:: 2.1.0
+        
+    to_pandas_kwargs : dict[str, Any], default None
+        Dictionary of arguments passed to the underlying engine's ``to_pandas``
 
     **kwargs
         Any additional kwargs are passed to the engine.
@@ -676,5 +681,6 @@ def read_parquet(
         use_nullable_dtypes=use_nullable_dtypes,
         dtype_backend=dtype_backend,
         filesystem=filesystem,
+        to_pandas_kwargs=to_pandas_kwargs,
         **kwargs,
     )
